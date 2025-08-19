@@ -1,9 +1,9 @@
 use std::{thread, time::Duration};
 
-const GRID_SIZE: usize = 30;
+const GRID_SIZE: usize = 40;
 const CLEAR_STR: &str = "\x1B[2J\x1B[H";
-const ALIVE_STR: &str = "# ";
-const DEAD_STR: &str = "  ";
+const ALIVE_STR: &str = "■ ";
+const DEAD_STR: &str = "□ ";
 
 const NEIGHBORS: [(i32, i32); 8] = [
     (-1, -1),
@@ -97,6 +97,6 @@ fn main() {
         print!("{CLEAR_STR}");
         game.display();
         game.tick();
-        thread::sleep(Duration::from_secs(1));
+        thread::sleep(Duration::from_millis(500));
     }
 }
