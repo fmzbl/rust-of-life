@@ -1,6 +1,6 @@
 use std::{thread, time::Duration};
 
-const GRID_SIZE: usize = 40;
+const GRID_SIZE: usize = 60;
 const CLEAR_STR: &str = "\x1B[2J\x1B[H";
 const ALIVE_STR: &str = "■ ";
 const DEAD_STR: &str = "□ ";
@@ -16,6 +16,7 @@ const NEIGHBORS: [(i32, i32); 8] = [
     (1, 1),
 ];
 
+
 struct Game {
     grid: Vec<Vec<bool>>,
 }
@@ -26,7 +27,29 @@ impl Game {
         Game { grid }
     }
 
-    fn seed(&mut self) {
+    fn seed_glider_gun(&mut self) {
+        // Gosper Glider Gun pattern coordinates
+        let glider_gun: &[(usize, usize)] = &[
+            (1, 25), (2, 23), (2, 25), (3, 13), (3, 14), (3, 21), (3, 22), (3, 35), (3, 36),
+            (4, 12), (4, 16), (4, 21), (4, 22), (4, 35), (4, 36), (5, 1), (5, 2), (5, 11),
+            (5, 17), (5, 21), (5, 22), (6, 1), (6, 2), (6, 11), (6, 15), (6, 17), (6, 18),
+            (6, 23), (6, 25), (7, 11), (7, 17), (7, 25), (8, 12), (8, 16), (9, 13), (9, 14),
+        ];
+
+        for row in self.grid.iter_mut() {
+            for cell in row.iter_mut() {
+                *cell = false;
+            }
+        }
+
+        for &(y, x) in glider_gun {
+            if y < GRID_SIZE && x < GRID_SIZE {
+                self.grid[y][x] = true;
+            }
+        }
+    }
+
+    fn seed_random(&mut self) {
         for row in self.grid.iter_mut() {
             for cell in row.iter_mut() {
                 let random_state = rand::random_bool(0.1);
@@ -92,11 +115,11 @@ impl Game {
 
 fn main() {
     let mut game = Game::new();
-    game.seed();
+    game.seed_glider_gun();
     loop {
         print!("{CLEAR_STR}");
         game.display();
         game.tick();
-        thread::sleep(Duration::from_millis(500));
+        thread::sleep(Duration::from_millis(300));
     }
 }
