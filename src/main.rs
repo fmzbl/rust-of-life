@@ -1,14 +1,16 @@
 use std::{thread, time::Duration};
 
-mod game;
+pub mod game;
+pub mod game_grid;
 
 use game::Game;
 use macroquad::window::next_frame;
 
+pub const GRID_SIZE: usize = 80;
+
 #[macroquad::main("Game of Life")]
 async fn main() {
     let mut game = Game::new();
-    game.seed_glider_gun();
     loop {
         game.draw();
         game.tick();
