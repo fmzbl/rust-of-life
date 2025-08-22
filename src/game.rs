@@ -33,18 +33,16 @@ impl Game {
     }
 
     pub fn tick(&mut self) {
-
         match self.game_state {
             GameState::Running => {
                 self.game_grid.apply_rules();
             }
             GameState::Editing => {
-		self.handle_editing();
-	    }
+                self.handle_editing();
+            }
         }
 
         self.apply_input_rules();
-	dbg!(&self.game_state);
     }
 
     pub fn draw(&self) {
@@ -75,7 +73,7 @@ impl Game {
             let grid_y = (mouse_y / CELL_SIZE) as usize;
 
             if grid_x < GRID_SIZE && grid_y < GRID_SIZE {
-		self.game_grid.toggle_cell(grid_x, grid_y);
+                self.game_grid.toggle_cell(grid_x, grid_y);
             }
         }
     }
