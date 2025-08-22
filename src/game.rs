@@ -7,14 +7,9 @@ use crate::GRID_SIZE;
 
 const CELL_SIZE: f32 = 10.0; // Size of each cell in pixels
 
-const CLEAR_STR: &str = "\x1B[2J\x1B[H";
-const ALIVE_STR: &str = "■ ";
-const DEAD_STR: &str = "□ ";
-
 #[derive(Debug, Default)]
 enum GameState {
     Running,
-    Pause,
     #[default]
     Editing,
 }
@@ -37,30 +32,7 @@ impl Game {
         }
     }
 
-    pub fn display(&self) {
-        let mut grid_string = String::new();
-
-        print!("{CLEAR_STR}");
-
-        for row in self.game_grid.get_ref().iter() {
-            for cell in row.iter() {
-                match cell {
-                    true => {
-                        grid_string.push_str(ALIVE_STR);
-                    }
-                    false => {
-                        grid_string.push_str(DEAD_STR);
-                    }
-                }
-            }
-            grid_string.push('\n');
-        }
-
-        print!("{grid_string}");
-    }
-
     pub fn tick(&mut self) {
-        self.apply_input_rules();
 
         match self.game_state {
             GameState::Running => {
@@ -69,8 +41,10 @@ impl Game {
             GameState::Editing => {
 		self.handle_editing();
 	    }
-            GameState::Pause => {}
         }
+
+        self.apply_input_rules();
+	dbg!(&self.game_state);
     }
 
     pub fn draw(&self) {
@@ -119,7 +93,6 @@ impl Game {
                     self.game_state = GameState::Running;
                 }
             }
-            GameState::Pause => {}
         }
     }
 }
