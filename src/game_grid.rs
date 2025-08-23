@@ -1,6 +1,6 @@
 use macroquad::prelude::*;
 
-use crate::GRID_SIZE;
+use crate::{game_editor::PatternCoords, GRID_SIZE};
 
 const NEIGHBORS: [(i32, i32); 8] = [
     (-1, -1),
@@ -25,67 +25,10 @@ impl GameGrid {
         GameGrid { grid }
     }
 
-    pub fn seed_glider_gun(&mut self) {
-        // Gosper Glider Gun pattern coordinates
-        let glider_gun: &[(usize, usize)] = &[
-            (1, 25),
-            (2, 23),
-            (2, 25),
-            (3, 13),
-            (3, 14),
-            (3, 21),
-            (3, 22),
-            (3, 35),
-            (3, 36),
-            (4, 12),
-            (4, 16),
-            (4, 21),
-            (4, 22),
-            (4, 35),
-            (4, 36),
-            (5, 1),
-            (5, 2),
-            (5, 11),
-            (5, 17),
-            (5, 21),
-            (5, 22),
-            (6, 1),
-            (6, 2),
-            (6, 11),
-            (6, 15),
-            (6, 17),
-            (6, 18),
-            (6, 23),
-            (6, 25),
-            (7, 11),
-            (7, 17),
-            (7, 25),
-            (8, 12),
-            (8, 16),
-            (9, 13),
-            (9, 14),
-        ];
-
-        for row in self.grid.iter_mut() {
-            for cell in row.iter_mut() {
-                *cell = false;
-            }
-        }
-
-        let starting_coords = (5, 5);
-
-        for &(y, x) in glider_gun {
+    pub fn apply_pattern(&mut self, coords: PatternCoords, start_x: usize, start_y: usize) {
+        for &(y, x) in coords {
             if y < GRID_SIZE && x < GRID_SIZE {
-                self.grid[y + starting_coords.0][x + starting_coords.1] = true;
-            }
-        }
-    }
-
-    pub fn seed_random(&mut self) {
-        for row in self.grid.iter_mut() {
-            for cell in row.iter_mut() {
-                // let random_state = rand::random_bool(0.1);
-                // *cell = random_state;
+                self.grid[y + start_y][x + start_x] = true;
             }
         }
     }

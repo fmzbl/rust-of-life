@@ -1,6 +1,6 @@
 use macroquad::prelude::*;
 
-use crate::game_grid::GameGrid;
+use crate::{game_editor::{GLIDER, GLIDER_GUN}, game_grid::GameGrid};
 use macroquad::prelude::*;
 
 use crate::GRID_SIZE;
@@ -22,7 +22,7 @@ pub struct Game {
 impl Game {
     pub fn new() -> Game {
         let mut game_grid = GameGrid::new();
-        game_grid.seed_glider_gun();
+        game_grid.apply_pattern(GLIDER_GUN.coords(), 2, 3);
 
         let game_state = GameState::default();
 
