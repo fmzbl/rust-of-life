@@ -56,6 +56,7 @@ enum EditorState {
     Idle
 }
 
+#[derive(Debug)]
 pub struct GameEditor {
     state: EditorState,
     editor_patterns: Vec<&'static EditorPattern>,

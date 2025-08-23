@@ -15,6 +15,7 @@ const NEIGHBORS: [(i32, i32); 8] = [
 
 type Grid = Vec<Vec<bool>>;
 
+#[derive(Debug)]
 pub struct GameGrid {
     grid: Grid,
 }
