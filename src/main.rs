@@ -15,7 +15,6 @@ async fn main() {
     loop {
         game.draw();
         game.tick();
-        thread::sleep(Duration::from_millis(100));
         next_frame().await
     }
 }

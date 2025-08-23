@@ -89,6 +89,10 @@ impl GameEditor {
 	}
     }
 
+    pub fn unselect_pattern(&mut self) {
+	self.state = EditorState::Idle;
+    }
+
     pub fn patterns(&self) -> &Vec<&EditorPattern> {
 	&self.editor_patterns
     }

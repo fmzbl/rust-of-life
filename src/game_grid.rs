@@ -27,7 +27,7 @@ impl GameGrid {
 
     pub fn apply_pattern(&mut self, coords: PatternCoords, start_x: usize, start_y: usize) {
         for &(y, x) in coords {
-            if y < GRID_SIZE && x < GRID_SIZE {
+            if y + start_y < GRID_SIZE && x + start_x < GRID_SIZE {
                 self.grid[y + start_y][x + start_x] = true;
             }
         }
