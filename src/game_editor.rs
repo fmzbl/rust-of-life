@@ -47,6 +47,49 @@ pub static GLIDER: EditorPattern = EditorPattern {
     coords: &[(0, 1), (1, 2), (2, 0), (2, 1), (2, 2)],
 };
 
+pub static PULSAR: EditorPattern = EditorPattern {
+    id: 2,
+    name: "pulsar",
+    coords: &[
+        (2, 4), (2, 5), (2, 6), (2, 10), (2, 11), (2, 12),
+        (4, 2), (4, 7), (4, 9), (4, 14),
+        (5, 2), (5, 7), (5, 9), (5, 14),
+        (6, 2), (6, 7), (6, 9), (6, 14),
+        (7, 4), (7, 5), (7, 6), (7, 10), (7, 11), (7, 12),
+        (9, 4), (9, 5), (9, 6), (9, 10), (9, 11), (9, 12),
+        (10, 2), (10, 7), (10, 9), (10, 14),
+        (11, 2), (11, 7), (11, 9), (11, 14),
+        (12, 2), (12, 7), (12, 9), (12, 14),
+        (14, 4), (14, 5), (14, 6), (14, 10), (14, 11), (14, 12),
+    ],
+};
+
+pub static PENTADECATHLON: EditorPattern = EditorPattern {
+    id: 3,
+    name: "pentadecathlon",
+    coords: &[
+        (0, 1), (1, 1), (2, 0), (2, 2), (3, 1), (4, 1), (5, 1), (6, 0), (6, 2), (7, 1),
+    ],
+};
+
+pub static BLINKER: EditorPattern = EditorPattern {
+    id: 4,
+    name: "blinker",
+    coords: &[(0, 0), (0, 1), (0, 2)],
+};
+
+pub static TOAD: EditorPattern = EditorPattern {
+    id: 5,
+    name: "toad",
+    coords: &[(1, 1), (1, 2), (1, 3), (2, 0), (2, 1), (2, 2)],
+};
+
+pub static BEACON: EditorPattern = EditorPattern {
+    id: 6,
+    name: "beacon",
+    coords: &[(1, 1), (1, 2), (2, 1), (2, 2), (3, 3), (3, 4), (4, 3), (4, 4)],
+};
+
 #[derive(Debug, Default)]
 enum EditorState {
     PatternSelected {
@@ -64,7 +107,15 @@ pub struct GameEditor {
 
 impl GameEditor {
     pub fn new() -> GameEditor {
-	let editor_patterns = vec![&GLIDER_GUN, &GLIDER];
+        let editor_patterns = vec![
+            &GLIDER_GUN,
+            &GLIDER,
+            &PULSAR,
+            &PENTADECATHLON,
+            &BLINKER,
+            &TOAD,
+            &BEACON,
+        ];
 
 	GameEditor {
 	    state: EditorState::default(),
