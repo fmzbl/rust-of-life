@@ -1,6 +1,6 @@
 use macroquad::prelude::*;
 
-use crate::{game_editor::PatternCoords, GRID_SIZE};
+use crate::{GRID_SIZE, game_editor::PatternCoords};
 
 const NEIGHBORS: [(i32, i32); 8] = [
     (-1, -1),

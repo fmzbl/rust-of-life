@@ -1,10 +1,7 @@
 use macroquad::prelude::*;
 use std::{thread, time::Duration};
 
-use crate::{
-    game_editor::{GameEditor},
-    game_grid::GameGrid,
-};
+use crate::{game_editor::GameEditor, game_grid::GameGrid};
 
 use crate::GRID_SIZE;
 
@@ -40,7 +37,7 @@ impl Game {
         match self.game_state {
             GameState::Running => {
                 self.game_grid.apply_rules();
-		thread::sleep(Duration::from_millis(100));
+                thread::sleep(Duration::from_millis(100));
             }
             GameState::Editing => {
                 self.handle_editing();
@@ -82,26 +79,21 @@ impl Game {
             GREEN,
         );
 
-	if matches!(self.game_state, GameState::Editing) {
-	    if let Some(pattern) = self.game_editor.pattern_selected() {
-		draw_text(
-		    &format!("Selected: {}", pattern.name()),
-		    220.0,
-		    40.0,
-		    20.0,
-		    GREEN,
-		);
-	    }
-	}
+        if matches!(self.game_state, GameState::Editing) {
+            if let Some(pattern) = self.game_editor.pattern_selected() {
+                draw_text(
+                    &format!("Selected: {}", pattern.name()),
+                    220.0,
+                    40.0,
+                    20.0,
+                    GREEN,
+                );
+            }
+        }
     }
 
     fn handle_editing(&mut self) {
-        let patterns_id: Vec<usize> = self
-            .game_editor
-            .patterns()
-            .iter()
-            .map(|p| p.id())
-            .collect();
+        let patterns_id: Vec<usize> = self.game_editor.patterns().iter().map(|p| p.id()).collect();
 
         for pattern_id in patterns_id {
             let key_code_option = match pattern_id {
