@@ -55,7 +55,7 @@ impl Game {
                 let color = if self.game_grid.get_ref()[y][x] {
                     WHITE
                 } else {
-                    GRAY
+                    DARKGRAY
                 };
                 draw_rectangle(
                     x as f32 * CELL_SIZE,
@@ -66,6 +66,14 @@ impl Game {
                 );
             }
         }
+
+        draw_text(
+	    "click; click; space",
+            400.0,
+            20.0,
+            20.0,
+            WHITE,
+        );
 
         // Draw status
         draw_text(
@@ -90,6 +98,17 @@ impl Game {
                 );
             }
         }
+
+	for (i, pattern) in self.game_editor.patterns().iter().enumerate() {
+	    let text = i.to_string() + ": " + pattern.name();
+	    draw_text(
+		&text,
+		20.0,
+		20.0 * (i + 1) as f32,
+		20.0,
+		PURPLE,
+	    );
+	}
     }
 
     fn handle_editing(&mut self) {
