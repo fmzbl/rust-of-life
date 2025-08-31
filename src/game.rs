@@ -90,7 +90,7 @@ impl Game {
         if matches!(self.game_state, GameState::Editing) {
             if let Some(pattern) = self.game_editor.pattern_selected() {
                 draw_text(
-                    &format!("Selected: {}", pattern.name()),
+                    &format!("(escape) Selected: {}", pattern.name()),
                     220.0,
                     40.0,
                     20.0,
