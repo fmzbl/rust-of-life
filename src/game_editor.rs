@@ -211,6 +211,10 @@ impl GameEditor {
         }
     }
 
+    pub fn get_editor_patterns(&self) -> &Vec<&'static EditorPattern> {
+        &self.editor_patterns
+    }
+
     pub fn pattern_selected(&self) -> Option<&EditorPattern> {
         match &self.state {
             EditorState::PatternSelected { pattern } => Some(pattern),

@@ -1,6 +1,7 @@
 use macroquad::prelude::*;
 use std::{thread, time::Duration};
 
+use crate::game_editor::PatternCoords;
 use crate::{game_editor::GameEditor, game_grid::GameGrid};
 
 use crate::GRID_SIZE;
@@ -37,6 +38,8 @@ impl Game {
         match self.game_state {
             GameState::Running => {
                 self.game_grid.apply_rules();
+                self.apply_random();
+
                 thread::sleep(Duration::from_millis(100));
             }
             GameState::Editing => {
@@ -45,6 +48,20 @@ impl Game {
         }
 
         self.apply_input_rules();
+    }
+
+    pub fn apply_random(&mut self) {
+        let patterns = self.game_editor.get_editor_patterns();
+        for pattern in patterns.iter() {
+            let roll = rand::gen_range(1, 6) == 1;
+            if roll {
+                let n1 = rand::gen_range(1, GRID_SIZE);
+                let n2 = rand::gen_range(1, GRID_SIZE);
+                self.game_grid.apply_pattern(pattern.coords(), n1, n2);
+            }
+        }
+
+        // cuantos, cuales, donde,
     }
 
     pub fn draw(&mut self) {
@@ -67,13 +84,7 @@ impl Game {
             }
         }
 
-        draw_text(
-	    "click; click; space",
-            400.0,
-            20.0,
-            20.0,
-            WHITE,
-        );
+        draw_text("click; click; space", 400.0, 20.0, 20.0, WHITE);
 
         // Draw status
         draw_text(
@@ -99,16 +110,10 @@ impl Game {
             }
         }
 
-	for (i, pattern) in self.game_editor.patterns().iter().enumerate() {
-	    let text = i.to_string() + ": " + pattern.name();
-	    draw_text(
-		&text,
-		20.0,
-		20.0 * (i + 1) as f32,
-		20.0,
-		PURPLE,
-	    );
-	}
+        for (i, pattern) in self.game_editor.patterns().iter().enumerate() {
+            let text = i.to_string() + ": " + pattern.name();
+            draw_text(&text, 20.0, 20.0 * (i + 1) as f32, 20.0, PURPLE);
+        }
     }
 
     fn handle_editing(&mut self) {
