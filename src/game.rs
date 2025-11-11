@@ -6,7 +6,7 @@ use crate::{game_editor::GameEditor, game_grid::GameGrid};
 
 use crate::GRID_SIZE;
 
-const CELL_SIZE: f32 = 10.0; // Size of each cell in pixels
+const CELL_SIZE: f32 = 20.0; // Size of each cell in pixels
 
 #[derive(Debug, Default)]
 enum GameState {
@@ -19,6 +19,7 @@ pub struct Game {
     game_grid: GameGrid,
     game_state: GameState,
     game_editor: GameEditor,
+    chaos: bool,
 }
 
 impl Game {
@@ -31,6 +32,7 @@ impl Game {
             game_grid,
             game_state,
             game_editor,
+	    chaos: false,
         }
     }
 
@@ -38,7 +40,10 @@ impl Game {
         match self.game_state {
             GameState::Running => {
                 self.game_grid.apply_rules();
-                self.apply_random();
+
+		if self.chaos {
+		    self.apply_random();
+		}
 
                 thread::sleep(Duration::from_millis(100));
             }
@@ -51,6 +56,7 @@ impl Game {
     }
 
     pub fn apply_random(&mut self) {
+
         let patterns = self.game_editor.get_editor_patterns();
         for pattern in patterns.iter() {
             let roll = rand::gen_range(1, 6) == 1;
@@ -89,7 +95,7 @@ impl Game {
         // Draw status
         draw_text(
             match self.game_state {
-                GameState::Running => "Running",
+                GameState::Running => {if self.chaos {"Running (chaos)"} else {"Running"}},
                 GameState::Editing => "Editing",
             },
             220.0,
@@ -165,16 +171,20 @@ impl Game {
     fn apply_input_rules(&mut self) {
         match self.game_state {
             GameState::Running => {
-                self.game_grid.apply_rules();
                 if is_key_pressed(KeyCode::Space) {
                     self.game_state = GameState::Editing;
                 }
+
             }
             GameState::Editing => {
                 if is_key_pressed(KeyCode::Space) {
-                    self.game_state = GameState::Running;
+		    self.game_state = GameState::Running;
                 }
             }
         }
+
+	if is_key_pressed(KeyCode::C) {
+	    self.chaos = !self.chaos;
+	}
     }
 }
