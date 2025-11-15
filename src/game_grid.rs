@@ -13,7 +13,13 @@ const NEIGHBORS: [(i32, i32); 8] = [
     (1, 1),
 ];
 
-type Grid = Vec<Vec<bool>>;
+type Grid = Vec<Vec<Cell>>;
+
+#[derive(Debug, Clone)]
+pub struct Cell {
+    pub alive: bool,
+    pub chaotic: bool,
+}
 
 #[derive(Debug)]
 pub struct GameGrid {
@@ -22,20 +28,23 @@ pub struct GameGrid {
 
 impl GameGrid {
     pub fn new() -> GameGrid {
-        let grid = vec![vec![false; GRID_SIZE]; GRID_SIZE];
+        let grid = vec![vec![Cell {alive: false, chaotic: false}; GRID_SIZE]; GRID_SIZE];
         GameGrid { grid }
     }
 
-    pub fn apply_pattern(&mut self, coords: PatternCoords, start_x: usize, start_y: usize) {
+    pub fn apply_pattern(&mut self, coords: PatternCoords, start_x: usize, start_y: usize, chaotic: bool) {
         for &(y, x) in coords {
             if y + start_y < GRID_SIZE && x + start_x < GRID_SIZE {
-                self.grid[y + start_y][x + start_x] = true;
+                self.grid[y + start_y][x + start_x] = Cell {alive: true, chaotic};
             }
         }
     }
 
     pub fn toggle_cell(&mut self, x: usize, y: usize) {
-        self.grid[y][x] = !self.grid[y][x]
+        self.grid[y][x] = Cell{
+	    alive: self.grid[y][x].alive,
+	    chaotic: self.grid[y][x].chaotic,
+	}
     }
 
     pub fn apply_rules(&mut self) {
@@ -55,7 +64,7 @@ impl GameGrid {
                         // guards against out of bounds and failed conversions of cords
                         match (x, y) {
                             (Ok(x), Ok(y)) if y < grid_copy.len() && x < grid_copy[y].len() => {
-                                Some(grid_copy[y][x])
+                                Some(grid_copy[y][x].alive)
                             }
                             (_, _) => None,
                         }
@@ -63,7 +72,7 @@ impl GameGrid {
                     .filter(|&n| n)
                     .count();
 
-                self.grid[cell_y][cell_x] = match (grid_copy[cell_y][cell_x], alive_neighbors) {
+                self.grid[cell_y][cell_x].alive = match (grid_copy[cell_y][cell_x].alive, alive_neighbors) {
                     (true, 2 | 3) => true,
                     (false, 3) => true,
                     _ => false,

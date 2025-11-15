@@ -2,6 +2,7 @@ use macroquad::prelude::*;
 use std::{thread, time::Duration};
 
 use crate::game_editor::PatternCoords;
+use crate::game_grid::Cell;
 use crate::{game_editor::GameEditor, game_grid::GameGrid};
 
 use crate::GRID_SIZE;
@@ -45,7 +46,7 @@ impl Game {
 		    self.apply_random();
 		}
 
-                thread::sleep(Duration::from_millis(100));
+                thread::sleep(Duration::from_millis(200));
             }
             GameState::Editing => {
                 self.handle_editing();
@@ -63,7 +64,7 @@ impl Game {
             if roll {
                 let n1 = rand::gen_range(1, GRID_SIZE);
                 let n2 = rand::gen_range(1, GRID_SIZE);
-                self.game_grid.apply_pattern(pattern.coords(), n1, n2);
+                self.game_grid.apply_pattern(pattern.coords(), n1, n2, true);
             }
         }
 
@@ -75,10 +76,10 @@ impl Game {
         clear_background(BLACK);
         for y in 0..GRID_SIZE {
             for x in 0..GRID_SIZE {
-                let color = if self.game_grid.get_ref()[y][x] {
-                    WHITE
-                } else {
-                    DARKGRAY
+                let color = match self.game_grid.get_ref()[y][x] {
+                    Cell {alive: true, chaotic:false} => {WHITE},
+                    Cell {alive: true, chaotic:true} => {RED}
+		    _ => {DARKGRAY}
                 };
                 draw_rectangle(
                     x as f32 * CELL_SIZE,
@@ -90,7 +91,6 @@ impl Game {
             }
         }
 
-        draw_text("click; click; space", 400.0, 20.0, 20.0, WHITE);
 
         // Draw status
         draw_text(
@@ -102,6 +102,15 @@ impl Game {
             20.0,
             20.0,
             GREEN,
+        );
+
+
+        draw_text(
+	    "c: Chaos",
+            400.0,
+            20.0,
+            20.0,
+            RED,
         );
 
         if matches!(self.game_state, GameState::Editing) {
@@ -158,7 +167,7 @@ impl Game {
             if let Some(pattern) = self.game_editor.pattern_selected() {
                 // apply pattern
                 self.game_grid
-                    .apply_pattern(pattern.coords(), grid_x, grid_y);
+                    .apply_pattern(pattern.coords(), grid_x, grid_y, false);
             } else {
                 // toogle cell
                 if grid_x < GRID_SIZE && grid_y < GRID_SIZE {

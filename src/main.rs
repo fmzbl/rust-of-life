@@ -7,7 +7,7 @@ pub mod game_grid;
 use game::Game;
 use macroquad::window::next_frame;
 
-pub const GRID_SIZE: usize = 300;
+pub const GRID_SIZE: usize = 40;
 
 #[macroquad::main("Game of Life")]
 async fn main() {
