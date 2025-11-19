@@ -60,15 +60,15 @@ impl Game {
 
         let patterns = self.game_editor.get_editor_patterns();
         for pattern in patterns.iter() {
+
             let roll = rand::gen_range(1, 6) == 1;
             if roll {
+		let chaotic = rand::gen_range(1, 3) == 1;
                 let n1 = rand::gen_range(1, GRID_SIZE);
                 let n2 = rand::gen_range(1, GRID_SIZE);
-                self.game_grid.apply_pattern(pattern.coords(), n1, n2, true);
+                self.game_grid.apply_pattern(pattern.coords(), n1, n2, chaotic);
             }
         }
-
-        // cuantos, cuales, donde,
     }
 
     pub fn draw(&mut self) {
@@ -79,7 +79,7 @@ impl Game {
                 let color = match self.game_grid.get_ref()[y][x] {
                     Cell {alive: true, chaotic:false} => {WHITE},
                     Cell {alive: true, chaotic:true} => {RED}
-		    _ => {DARKGRAY}
+		    _ => {BLACK}
                 };
                 draw_rectangle(
                     x as f32 * CELL_SIZE,
@@ -105,12 +105,20 @@ impl Game {
         );
 
 
+	let chaos_ratio = self.game_grid.get_chaos_ratio().to_string();
         draw_text(
-	    "c: Chaos",
+	    "c: Chaos, ratio:",
             400.0,
             20.0,
             20.0,
             RED,
+        );
+        draw_text(
+	    &chaos_ratio.to_string(),
+            550.0,
+            20.0,
+            20.0,
+            BLUE,
         );
 
         if matches!(self.game_state, GameState::Editing) {
@@ -166,11 +174,13 @@ impl Game {
 
             if let Some(pattern) = self.game_editor.pattern_selected() {
                 // apply pattern
+
+		let chaotic = rand::gen_range(1, 3) == 1;
                 self.game_grid
-                    .apply_pattern(pattern.coords(), grid_x, grid_y, false);
+                    .apply_pattern(pattern.coords(), grid_x, grid_y, chaotic);
             } else {
                 // toogle cell
-                if grid_x < GRID_SIZE && grid_y < GRID_SIZE {
+                if grid_x <= GRID_SIZE && grid_y <= GRID_SIZE {
                     self.game_grid.toggle_cell(grid_x, grid_y);
                 }
             }

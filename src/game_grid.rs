@@ -32,6 +32,22 @@ impl GameGrid {
         GameGrid { grid }
     }
 
+    pub fn get_chaos_ratio(&self) -> f32 {
+	let mut chaos_counter = 0.0;
+	let mut alive_counter = 0.0;
+        for row in self.grid.iter() {
+            for cell in row {
+		if cell.chaotic && cell.alive {
+		    chaos_counter += 1.0;
+		} else if cell.alive {
+		    alive_counter += 1.0;
+		}
+	    }
+	}
+
+	chaos_counter / (chaos_counter + alive_counter)
+    }
+
     pub fn apply_pattern(&mut self, coords: PatternCoords, start_x: usize, start_y: usize, chaotic: bool) {
         for &(y, x) in coords {
             if y + start_y < GRID_SIZE && x + start_x < GRID_SIZE {
@@ -41,9 +57,11 @@ impl GameGrid {
     }
 
     pub fn toggle_cell(&mut self, x: usize, y: usize) {
-        self.grid[y][x] = Cell{
-	    alive: self.grid[y][x].alive,
-	    chaotic: self.grid[y][x].chaotic,
+        let chaotic = rand::gen_range(1, 3) == 1;
+	
+        self.grid[y][x] = Cell {
+	    alive: !self.grid[y][x].alive,
+	    chaotic,
 	}
     }
 
@@ -60,7 +78,7 @@ impl GameGrid {
 
                         let x = usize::try_from(x);
                         let y = usize::try_from(y);
-
+			
                         // guards against out of bounds and failed conversions of cords
                         match (x, y) {
                             (Ok(x), Ok(y)) if y < grid_copy.len() && x < grid_copy[y].len() => {
@@ -68,6 +86,7 @@ impl GameGrid {
                             }
                             (_, _) => None,
                         }
+
                     })
                     .filter(|&n| n)
                     .count();
@@ -77,12 +96,13 @@ impl GameGrid {
                     (false, 3) => true,
                     _ => false,
                 };
+
             }
         }
     }
 
     pub fn get_ref(&self) -> &Grid {
-        return &self.grid;
+        &self.grid
     }
 }
 
