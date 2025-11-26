@@ -28,41 +28,59 @@ pub struct GameGrid {
 
 impl GameGrid {
     pub fn new() -> GameGrid {
-        let grid = vec![vec![Cell {alive: false, chaotic: false}; GRID_SIZE]; GRID_SIZE];
+        let grid = vec![
+            vec![
+                Cell {
+                    alive: false,
+                    chaotic: false
+                };
+                GRID_SIZE
+            ];
+            GRID_SIZE
+        ];
         GameGrid { grid }
     }
 
     pub fn get_chaos_ratio(&self) -> f32 {
-	let mut chaos_counter = 0.0;
-	let mut alive_counter = 0.0;
+        let mut chaos_counter = 0.0;
+        let mut alive_counter = 0.0;
         for row in self.grid.iter() {
             for cell in row {
-		if cell.chaotic && cell.alive {
-		    chaos_counter += 1.0;
-		} else if cell.alive {
-		    alive_counter += 1.0;
-		}
-	    }
-	}
+                if cell.chaotic && cell.alive {
+                    chaos_counter += 1.0;
+                } else if cell.alive {
+                    alive_counter += 1.0;
+                }
+            }
+        }
 
-	chaos_counter / (chaos_counter + alive_counter)
+        chaos_counter / (chaos_counter + alive_counter)
     }
 
-    pub fn apply_pattern(&mut self, coords: PatternCoords, start_x: usize, start_y: usize, chaotic: bool) {
+    pub fn apply_pattern(
+        &mut self,
+        coords: PatternCoords,
+        start_x: usize,
+        start_y: usize,
+        chaotic: bool,
+    ) {
         for &(y, x) in coords {
             if y + start_y < GRID_SIZE && x + start_x < GRID_SIZE {
-                self.grid[y + start_y][x + start_x] = Cell {alive: true, chaotic};
+                self.grid[y + start_y][x + start_x] = Cell {
+                    alive: true,
+                    chaotic,
+                };
             }
         }
     }
 
     pub fn toggle_cell(&mut self, x: usize, y: usize) {
         let chaotic = rand::gen_range(1, 3) == 1;
-	
+
         self.grid[y][x] = Cell {
-	    alive: !self.grid[y][x].alive,
-	    chaotic,
-	}
+            alive: !self.grid[y][x].alive,
+            chaotic,
+        }
     }
 
     pub fn apply_rules(&mut self) {
@@ -78,7 +96,7 @@ impl GameGrid {
 
                         let x = usize::try_from(x);
                         let y = usize::try_from(y);
-			
+
                         // guards against out of bounds and failed conversions of cords
                         match (x, y) {
                             (Ok(x), Ok(y)) if y < grid_copy.len() && x < grid_copy[y].len() => {
@@ -86,17 +104,16 @@ impl GameGrid {
                             }
                             (_, _) => None,
                         }
-
                     })
                     .filter(|&n| n)
                     .count();
 
-                self.grid[cell_y][cell_x].alive = match (grid_copy[cell_y][cell_x].alive, alive_neighbors) {
-                    (true, 2 | 3) => true,
-                    (false, 3) => true,
-                    _ => false,
-                };
-
+                self.grid[cell_y][cell_x].alive =
+                    match (grid_copy[cell_y][cell_x].alive, alive_neighbors) {
+                        (true, 2 | 3) => true,
+                        (false, 3) => true,
+                        _ => false,
+                    };
             }
         }
     }

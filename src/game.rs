@@ -33,7 +33,7 @@ impl Game {
             game_grid,
             game_state,
             game_editor,
-	    chaos: false,
+            chaos: false,
         }
     }
 
@@ -42,9 +42,9 @@ impl Game {
             GameState::Running => {
                 self.game_grid.apply_rules();
 
-		if self.chaos {
-		    self.apply_random();
-		}
+                if self.chaos {
+                    self.apply_random();
+                }
 
                 thread::sleep(Duration::from_millis(200));
             }
@@ -57,45 +57,55 @@ impl Game {
     }
 
     pub fn apply_random(&mut self) {
-
         let patterns = self.game_editor.get_editor_patterns();
         for pattern in patterns.iter() {
-
             let roll = rand::gen_range(1, 6) == 1;
             if roll {
-		let chaotic = rand::gen_range(1, 3) == 1;
+                let chaotic = rand::gen_range(1, 3) == 1;
                 let n1 = rand::gen_range(1, GRID_SIZE);
                 let n2 = rand::gen_range(1, GRID_SIZE);
-                self.game_grid.apply_pattern(pattern.coords(), n1, n2, chaotic);
+                self.game_grid
+                    .apply_pattern(pattern.coords(), n1, n2, chaotic);
             }
         }
     }
 
     pub fn draw(&mut self) {
         // grid
-        clear_background(BLACK);
+        clear_background(WHITE);
         for y in 0..GRID_SIZE {
             for x in 0..GRID_SIZE {
                 let color = match self.game_grid.get_ref()[y][x] {
-                    Cell {alive: true, chaotic:false} => {WHITE},
-                    Cell {alive: true, chaotic:true} => {RED}
-		    _ => {BLACK}
+                    Cell {
+                        alive: true,
+                        chaotic: false,
+                    } => BLACK,
+                    Cell {
+                        alive: true,
+                        chaotic: true,
+                    } => RED,
+                    _ => WHITE,
                 };
                 draw_rectangle(
                     x as f32 * CELL_SIZE,
                     y as f32 * CELL_SIZE,
-                    CELL_SIZE - 1.0, // -1 to avoid gaps
-                    CELL_SIZE - 1.0,
+                    CELL_SIZE,
+                    CELL_SIZE,
                     color,
                 );
             }
         }
 
-
         // Draw status
         draw_text(
             match self.game_state {
-                GameState::Running => {if self.chaos {"Running (chaos)"} else {"Running"}},
+                GameState::Running => {
+                    if self.chaos {
+                        "Running (chaos)"
+                    } else {
+                        "Running"
+                    }
+                }
                 GameState::Editing => "Editing",
             },
             220.0,
@@ -104,22 +114,9 @@ impl Game {
             GREEN,
         );
 
-
-	let chaos_ratio = self.game_grid.get_chaos_ratio().to_string();
-        draw_text(
-	    "c: Chaos, ratio:",
-            400.0,
-            20.0,
-            20.0,
-            RED,
-        );
-        draw_text(
-	    &chaos_ratio.to_string(),
-            550.0,
-            20.0,
-            20.0,
-            BLUE,
-        );
+        let chaos_ratio = self.game_grid.get_chaos_ratio().to_string();
+        draw_text("c: Chaos, ratio:", 400.0, 20.0, 20.0, RED);
+        draw_text(&chaos_ratio.to_string(), 550.0, 20.0, 20.0, BLUE);
 
         if matches!(self.game_state, GameState::Editing) {
             if let Some(pattern) = self.game_editor.pattern_selected() {
@@ -175,7 +172,7 @@ impl Game {
             if let Some(pattern) = self.game_editor.pattern_selected() {
                 // apply pattern
 
-		let chaotic = rand::gen_range(1, 3) == 1;
+                let chaotic = rand::gen_range(1, 3) == 1;
                 self.game_grid
                     .apply_pattern(pattern.coords(), grid_x, grid_y, chaotic);
             } else {
@@ -193,17 +190,16 @@ impl Game {
                 if is_key_pressed(KeyCode::Space) {
                     self.game_state = GameState::Editing;
                 }
-
             }
             GameState::Editing => {
                 if is_key_pressed(KeyCode::Space) {
-		    self.game_state = GameState::Running;
+                    self.game_state = GameState::Running;
                 }
             }
         }
 
-	if is_key_pressed(KeyCode::C) {
-	    self.chaos = !self.chaos;
-	}
+        if is_key_pressed(KeyCode::C) {
+            self.chaos = !self.chaos;
+        }
     }
 }
