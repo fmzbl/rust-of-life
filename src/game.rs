@@ -7,7 +7,7 @@ use crate::{game_editor::GameEditor, game_grid::GameGrid};
 
 use crate::GRID_SIZE;
 
-const CELL_SIZE: f32 = 20.0; // Size of each cell in pixels
+const CELL_SIZE: f32 = 15.0; // Size of each cell in pixels
 
 #[derive(Debug, Default)]
 enum GameState {
@@ -78,7 +78,7 @@ impl Game {
             for x in 0..GRID_SIZE {
                 let color = match self.game_grid.get_ref()[y][x] {
                     Cell {alive: true, chaotic:false} => {WHITE},
-                    Cell {alive: true, chaotic:true} => {RED}
+                    Cell {alive: true, chaotic:true} => {PINK}
 		    _ => {BLACK}
                 };
                 draw_rectangle(
